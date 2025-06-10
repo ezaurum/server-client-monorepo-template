@@ -15,15 +15,6 @@
 4. 개발 환경 실행 -
    - `mise dev` 명령어를 사용하여 개발 환경 전체를 한 번에 실행할 수 있습니다.
    - [hivemind](https://github.com/DarthSim/hivemind) 를 사용하여 로그를 통합합니다.
-   `bash
- mise dev
- ` - 클라이언트 실행
-   `bash
-     mise dev:client
-     ` - 서버 실행
-   `bash
-     mise dev:server
-     ` - 환경을 위한 docker compose 실행
-   `bash
-     mise infra:up 
-     `
+   - 클라이언트 실행 - `mise client:dev`
+   - 서버 실행 - `mise server:dev`
+   - 환경을 위한 docker compose 실행 - `mise infra:up`
