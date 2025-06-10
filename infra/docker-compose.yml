@@ -1,0 +1,69 @@
+# 개발용 # 도커 컴포즈로 실행
+# docker compose up
+services:
+  db:
+    image: postgres
+    restart: no
+    shm_size: 128mb
+    env_file:
+      - ./.env.db.shared
+      - ./.env.db.generated
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - ${POSTGRES_PORT:-5432}
+    networks:
+      default:
+        ipv4_address: ${POSTGRES_HOST}
+
+  adminer:
+    image: adminer
+    restart: no
+    expose:
+      - 8080
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        ipv4_address: 172.78.0.8
+
+  redis:
+    restart: no
+    image: redis
+    expose:
+      - 6379
+    command:
+      - redis-server
+    networks:
+      default:
+        ipv4_address: 172.78.0.79
+  nginx:
+    image: nginx:latest
+    restart: no
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    extra_hosts:
+      - "host.docker.internal:172.78.0.1"
+    networks:
+      - default
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.78.0.0/16
+          gateway: 172.78.0.1

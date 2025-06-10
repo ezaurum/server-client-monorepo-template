@@ -1,0 +1,5 @@
+# docker가 관리하는 데이터베이스 파일
+db_data/
+.env
+.env.local
+.env.db.generated

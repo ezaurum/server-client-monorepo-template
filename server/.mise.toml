@@ -1,0 +1,34 @@
+[tools]
+go = "1.24"
+
+[tasks."mod:tidy"]
+description = "Tidy the Go module dependencies"
+run = "go mod tidy"
+
+[tasks.build]
+description = "Build the Go application"
+run = "go build -o ./tmp/main ."
+depends = ["mod:tidy"]
+
+[tasks.test]
+description = "Run tests for the Go application"
+run = "go test ./..."
+
+[tasks.lint]
+description = "Run linters on the Go application"
+run = "golangci-lint run ./..."
+
+[tasks.format]
+description = "Format the Go code"
+run = "gofmt -w ."
+
+[tasks."dev:run"]
+description = "Run the Go application"
+run = "RUST_LOG=warn go run main.go"
+depends = ["mod:tidy"]
+
+[tasks.dev]
+description = "Run and Reload the application when files change"
+# --glob은 dir 기준으로 작동합니다.
+run = "mise watch --glob '**/*.go' --ignore 'tmp/*' --ignore 'vendor/*' -d 100ms --stop-signal SIGTERM --delay-run 500ms -- dev:run"
+

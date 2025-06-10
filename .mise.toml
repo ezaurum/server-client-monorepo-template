@@ -1,0 +1,60 @@
+[tools]
+go = "1.24"
+hivemind = "latest"
+jq = "latest"
+node = "23"
+pnpm = "10"
+watchexec = "latest"
+
+[tasks."infra:build"]
+description = "Build the infrastructure using Docker Compose"
+dir = "./infra"
+run = [
+    "./json2env.sh ./config/db.json .env.db.generated",
+    "sed -e 's/^DATABASE=/DB=/' -e 's/^/POSTGRES_/' .env.db.generated > .env.db.generated.tmp && mv .env.db.generated.tmp .env.db.generated"
+]
+
+[tasks."infra:up"]
+description = "Start the infrastructure using Docker Compose"
+depends = ["infra:build"]
+dir = "./infra"
+run = "docker compose --env-file .env.db.generated --env-file .env.shared -f ./docker-compose.yml up -d"
+
+[tasks."infra:down"]
+dir = "./infra"
+description = "Stop the infrastructure using Docker Compose"
+run = "docker compose -f ./docker-compose.yml down"
+
+[tasks."infra:remove"]
+dir = "./infra"
+description = "Remove the infrastructure using Docker Compose"
+run = "docker compose -f ./docker-compose.yml down -v --remove-orphans"
+
+[tasks."infra:logs"]
+dir = "./infra"
+description = "Show logs of the infrastructure using Docker Compose"
+run = "docker compose -f ./docker-compose.yml logs -f"
+
+[tasks."server:dev"]
+description = "Run and Reload the server application when files change"
+dir = "./server"
+run = "mise run dev"
+
+[tasks."client:setup"]
+description = "Setup client packages"
+dir = "./client"
+run = "pnpm install"
+
+[tasks."client:dev"]
+description = "Run and Reload the client application when files change"
+depends = ["client:setup"]
+run = "pnpm run client:dev"
+
+[tasks."hivemind"]
+description = "Run the Hivemind application"
+run = "hivemind"
+
+[tasks."dev"]
+description = "Run and Reload the application when files change"
+depends = ["infra:up"]
+run = "mise hivemind"
