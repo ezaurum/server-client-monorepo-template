@@ -13,8 +13,8 @@
    mise install
    ```
 4. 개발 환경 실행 -
-   로그는 필요한 - `mise dev` 명령어를 사용하여 개발 환경 전체를 한 번에 실행할 수 있습니다.
-   [hivemind](https://github.com/DarthSim/hivemind) 를 사용하여 로그를 통합합니다.
+   - `mise dev` 명령어를 사용하여 개발 환경 전체를 한 번에 실행할 수 있습니다.
+   - [hivemind](https://github.com/DarthSim/hivemind) 를 사용하여 로그를 통합합니다.
    `bash
  mise dev
  ` - 클라이언트 실행
